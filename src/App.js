@@ -4,16 +4,43 @@ import './App.css';
 class App extends Component {
   state = {
     user: 'Rein',
-    newUser: ''
   }
 
   componentDidMount(){
     // this.state.user = 'Mimi' // react has no idea
-    console.log('MOUNTED')
+    // console.log('MOUNTED')
     this.setState({
       userId: 1,
       user: 'Mimi',
     })
+  }
+
+  // Define our callback here
+  updateUser = (user) => {
+    this.setState({
+      user: user,
+      newUser: ''
+    })
+  }
+
+
+  render(){
+    // console.log('PROPS:', this.props, 'STATE:', this.state)
+    return (
+      <div className="App">
+        <header className="App-header">
+          <Title user={this.state.user}/>
+          {/* Pass down callback prop: updateUser */}
+          <Form updateUser={this.updateUser}/>
+        </header>
+      </div>
+    );
+  }
+}
+
+class Form extends Component {
+  state = {
+    newUser: ''
   }
 
   handleChange = (event) => {
@@ -23,28 +50,27 @@ class App extends Component {
   }
 
   handleSubmit = (event) => {
-    console.log(this.state.newUser)
     event.preventDefault()
-    this.setState({
-      user: this.state.newUser,
-      newUser: ''
-    })
+    console.log(this.props)
+    this.props.updateUser(this.state.newUser) // use callback to setState user in App
+    this.setState({ newUser: ''}) // setState form with empty (to clear input field)
   }
 
   render(){
-    console.log('PROPS:', this.props, 'STATE:', this.state)
+    console.log(this.state)
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1>{ this.state.user }</h1>
-          <form onSubmit={this.handleSubmit}>
-            <label>User name:</label>
-            <input value={this.state.newUser} onChange={this.handleChange}/>
-            <input type='submit'/>
-          </form>
-        </header>
-      </div>
-    );
+      <form onSubmit={this.handleSubmit}>
+        <label>User name:</label>
+        <input value={this.state.newUser} onChange={this.handleChange}/>
+        <input type='submit'/>
+      </form>
+    )
+  }
+}
+
+class Title extends Component {
+  render(){
+    return <h1>{this.props.user}</h1>
   }
 }
 
